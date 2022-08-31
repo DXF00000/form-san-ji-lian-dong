@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三级</title>
+    <script src="./city_code.js"></script>
+</head>
+
+<body>
+    <!-- 省份 -->
+    <select name="province" id="province"></select>
+    <!-- 城市 -->
+    <select name="city" id="city"></select>
+    <!-- 区 -->
+    <select name="county" id="county"></select>
+
+    <script>
+        let pro = document.getElementById("province");
+        let cit = document.getElementById("city");
+        let coun = document.getElementById("county");
+        let cityDate = [];//设置一个空数组获取city
+
+        //省份
+        for (let i = 0; i < city_code.length; i++) {
+            // 创建节点
+            let option = document.createElement("option");//创建新的选项卡
+            option.value = city_code[i].code;//获取省份编码
+            option.innerHTML = city_code[i].name;//获取省份名称
+            // 插入节点
+            pro.appendChild(option);//给省份下拉框添加选项卡
+        }
+
+        //城市
+        selCity();//调用函数，设置城市下拉框的默认值
+
+        pro.addEventListener("change", () => {//监听省份选项，改变城市下拉框
+            let citChild = cit.children;//把city的子元素赋值给citChild
+            for (let i = 0; i < citChild.length; i++) {
+                citChild[i].remove();//删除city的子元素，防止数据拼接
+                i--;
+            }
+            selCity()//回调函数
+            let counChild = coun.children;
+            for (let i = 0; i < counChild.length; i++) {
+                counChild[i].remove();
+
+                i--;
+            }
+
+            // selCoun()
+        })
+
+        //区
+        selCoun()
+        cit.addEventListener("change", () => {
+            let counChild = coun.children;  // coun 是区的标签
+            for (let i = 0; i < counChild.length; i++) {
+                counChild[i].remove();//删除city的子元素，防止数据拼接
+                i--;
+            }
+            selCoun()
+        })
+
+        //城市封装函数
+        function selCity() {
+            if (city_code[pro.selectedIndex].code == "710000" || city_code[pro.selectedIndex].code == "810000" || city_code[pro.selectedIndex].code == "820000") {//判断编码是否为特殊省份
+                let option = document.createElement("option");//创建节点
+                option.value = city_code[pro.selectedIndex].code;//特殊省份的城市下拉框获取省份编码
+                option.innerHTML = city_code[pro.selectedIndex].name;//特殊省份的城市下拉框获取省份名称
+                cit.appendChild(option);
+            } else {
+                cityDate = city_code[pro.selectedIndex]["city"];//获取省份下标下的city
+                for (let i = 0; i < cityDate.length; i++) {
+                    let option = document.createElement("option");
+                    option.value = cityDate[i].code;
+                    option.innerHTML = cityDate[i].name;
+                    cit.appendChild(option);
+                }
+            }
+        }
+        //区封装函数
+        function selCoun() {
+            if (city_code[pro.selectedIndex].code == "710000" || city_code[pro.selectedIndex].code == "810000" || city_code[pro.selectedIndex].code == "820000") {//判断编码是否为特殊省份
+                let option = document.createElement("option");
+                option.value = city_code[pro.selectedIndex].code;
+                option.innerHTML = city_code[pro.selectedIndex].name;
+                coun.appendChild(option);
+            } else {
+                //  把装有二级联动的值 获取它的二次值
+                let counTy = cityDate[cit.selectedIndex]["area"];
+                for (let i = 0; i < counTy.length; i++) {
+                    let option = document.createElement("option");
+                    option.value = counTy[i].code;
+                    option.innerHTML = counTy[i].name;
+                    coun.appendChild(option);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
